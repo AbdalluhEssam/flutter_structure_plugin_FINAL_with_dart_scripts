@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>flutter-full-structure-generator</id>
+    <name>Flutter Full Structure Generator</name>
+    <vendor email="abdallhesam100@gmail.com" url="https://github.com/AbdalluhEssam">Abdalluh Essam</vendor>
+    <description>
+        A powerful plugin to generate full clean architecture structure or new feature modules in Flutter apps using Dart scripts.
+    </description>
+    <version>1.0.0</version>
+    <idea-version since-build="231.0" until-build="241.*"/>
+    <depends>org.jetbrains.plugins.dart</depends>
+
+    <actions>
+        <action
+            id="FlutterStructureAction"
+            class="com.abdalluh.flutterstructure.GenerateStructureAction"
+            text="Generate Flutter Structure"
+            description="Runs Dart script to generate Flutter clean architecture structure.">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>

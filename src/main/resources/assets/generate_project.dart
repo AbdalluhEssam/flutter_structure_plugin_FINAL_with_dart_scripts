@@ -198,76 +198,94 @@ Future<void> _generateMainApp(Directory libDir, String projectName) async {
 }
 
 Future<void> _generatePubspecYaml(
-  Directory projectDir,
-  String projectName,
-) async {
-  final flutterVersionResult = await Process.run('flutter', ['--version']);
-  final flutterVersionOutput = flutterVersionResult.stdout.toString();
+    Directory projectDir,
+    String projectName,
+    ) async {
+  final flutterCmd = Platform.isWindows ? 'flutter.bat' : 'flutter';
+
+  late final String flutterVersionOutput;
+  try {
+    final flutterVersionResult = await Process.run(flutterCmd, ['--version']);
+    flutterVersionOutput = flutterVersionResult.stdout.toString();
+  } catch (e) {
+    stderr.writeln(
+      '❌ فشل في تشغيل flutter --version. تأكد أن Flutter موجود في PATH.',
+    );
+    rethrow;
+  }
+
+  // استخراج إصدار Dart باستخدام RegExp
   final sdkMatch = RegExp(
     r'Dart\sSDK\sversion:\s(\d+\.\d+\.\d+)',
   ).firstMatch(flutterVersionOutput);
+  final dartVersion = sdkMatch != null ? sdkMatch.group(1)! : '3.0.0';
+  final dartVersionClean = dartVersion.replaceAll('^', '');
 
-  final dartVersion = sdkMatch != null ? sdkMatch.group(1)! : '^3.7.2';
+  // استخراج إصدار Flutter
+  final flutterMatch = RegExp(
+    r'Flutter\s(\d+\.\d+\.\d+)',
+  ).firstMatch(flutterVersionOutput);
+  final flutterVersion =
+  flutterMatch != null ? flutterMatch.group(1)! : 'unknown';
 
   final pubspecContent = '''
 name: $projectName
-description: A new Flutter project with Clean Architecture
+description: A new Flutter project with Clean Architecture by Abdalluh Essam
+# Flutter version on machine: $flutterVersion
 publish_to: 'none'
 
-
 environment:
- sdk: '>=${dartVersion.split('.').first}.0.0 <4.0.0'
-
+  sdk: '>=$dartVersionClean <4.0.0'
 
 dependencies:
- flutter:
-   sdk: flutter
- flutter_bloc: ^9.1.0
- dio: ^5.8.0+1
- shared_preferences: ^2.2.2
- easy_localization: ^3.0.7+1
- intl:
- equatable: ^2.0.7
- get_it: ^8.0.3
- cached_network_image: ^3.4.1
- flutter_screenutil: ^5.9.3
- flutter_animate: ^4.5.2
- freezed_annotation: ^3.0.0
- json_annotation: ^4.9.0
- flutter_native_splash: ^2.4.5
- animate_do: ^4.2.0
- lottie: ^3.3.1
- google_fonts: ^6.2.1
- flutter_launcher_icons: ^0.14.3
- animator: ^3.3.0
- dartz: ^0.10.1
- flutter_svg: ^2.0.7
- cupertino_icons: ^1.0.8
-
+  flutter:
+    sdk: flutter
+  flutter_bloc:
+  dio:
+  shared_preferences:
+  easy_localization:
+  intl:
+  equatable:
+  get_it:
+  cached_network_image:
+  flutter_screenutil:
+  flutter_animate:
+  freezed_annotation:
+  json_annotation:
+  flutter_native_splash:
+  animate_do:
+  lottie:
+  google_fonts:
+  flutter_launcher_icons:
+  animator:
+  dartz:
+  flutter_svg:
+  cupertino_icons:
 
 dev_dependencies:
- flutter_test:
-   sdk: flutter
- build_runner: ^2.4.6
- freezed: ^3.0.4
- json_serializable: ^6.6.2
- bloc_test: ^10.0.0
- mockito: ^5.3.2
- flutter_lints: ^2.0.1
-
+  flutter_test:
+    sdk: flutter
+  build_runner:
+  freezed:
+  json_serializable:
+  bloc_test:
+  mockito:
+  flutter_lints:
 
 flutter:
- uses-material-design: true
- generate: true
- assets:
-   - assets/images/
-   - assets/icons/
-   - assets/lottie/
-   - assets/lang/
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/lottie/
+    - assets/lang/
 ''';
 
   final file = File(join(projectDir.path, 'pubspec.yaml'));
   await file.writeAsString(pubspecContent);
+
+  print('📄 تم إنشاء ملف pubspec.yaml بنجاح!');
 }
 
 // ============================ الأكواد ============================

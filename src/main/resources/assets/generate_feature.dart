@@ -1,11 +1,10 @@
-// dart tool/generate_feature.dart home
-
 import 'dart:io';
 
 void main(List<String> arguments) {
+  // التأكد من أن المستخدم قد أدخل اسم الـ feature
   if (arguments.isEmpty) {
-    print('❌ رجاءً اكتب اسم الـ feature:');
-    print('مثال: dart tool/generate_feature.dart login');
+    print('❌ رجاءً اكتب اسم الـ feature: ');
+    print('مثال: dart tool/generate_feature.dart login 🇪🇬');
     return;
   }
 
@@ -13,6 +12,7 @@ void main(List<String> arguments) {
   final className = capitalize(featureName);
   final basePath = 'lib/features/$featureName';
 
+  // قائمة المجلدات التي سيتم إنشاؤها
   final folders = [
     '$basePath/domain/entities',
     '$basePath/domain/repositories',
@@ -24,11 +24,27 @@ void main(List<String> arguments) {
     '$basePath/presentation/pages',
   ];
 
+  // إنشاء المجلدات المطلوبة
   for (final folder in folders) {
     Directory(folder).createSync(recursive: true);
   }
 
-  // domain layer
+  // إنشاء الطبقات المختلفة: Domain, Data, Presentation
+
+  // Domain Layer
+  _createDomainFiles(basePath, featureName, className);
+
+  // Data Layer
+  _createDataFiles(basePath, featureName, className);
+
+  // Presentation Layer
+  _createPresentationFiles(basePath, featureName, className);
+
+  print('✅ تم إنشاء الـ Feature "$featureName" مع الهيكل الكامل. 🇪🇬');
+}
+
+void _createDomainFiles(String basePath, String featureName, String className) {
+  // إنشاء الملفات الخاصة بالـ Domain Layer
   File(
     '$basePath/domain/entities/${featureName}_entity.dart',
   ).writeAsStringSync('''
@@ -58,8 +74,10 @@ class ${className}UseCase {
   // TODO: Implement call logic
 }
 ''');
+}
 
-  // data layer
+void _createDataFiles(String basePath, String featureName, String className) {
+  // إنشاء الملفات الخاصة بالـ Data Layer
   File('$basePath/data/models/${featureName}_model.dart').writeAsStringSync('''
 import '../../domain/entities/${featureName}_entity.dart';
 
@@ -95,8 +113,14 @@ class ${className}RepositoryImpl implements ${className}Repository {
   // TODO: Implement repository logic
 }
 ''');
+}
 
-  // presentation: cubit
+void _createPresentationFiles(
+    String basePath,
+    String featureName,
+    String className,
+    ) {
+  // إنشاء الملفات الخاصة بالـ Presentation Layer: Cubit و Page
   File(
     '$basePath/presentation/cubit/${featureName}_state.dart',
   ).writeAsStringSync('''
@@ -138,7 +162,6 @@ class ${className}Cubit extends Cubit<${className}State> {
 }
 ''');
 
-  // presentation: page
   File(
     '$basePath/presentation/pages/${featureName}_page.dart',
   ).writeAsStringSync('''
@@ -171,8 +194,7 @@ class ${className}Page extends StatelessWidget {
   }
 }
 ''');
-
-  print('✅ Feature "$featureName" created with full structure.');
 }
 
+// وظيفة لكتابة أول حرف بحروف كبيرة
 String capitalize(String s) => s[0].toUpperCase() + s.substring(1);

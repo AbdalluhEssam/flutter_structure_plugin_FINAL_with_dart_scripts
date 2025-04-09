@@ -1,10 +1,14 @@
 plugins {
-    kotlin("jvm") version "1.7.20"
-    id("org.jetbrains.intellij") version "1.10.0"
+    kotlin("jvm") version "1.8.22"
+    id("org.jetbrains.intellij") version "1.13.3"
 }
 
 group = "com.abdalluh.flutterstructure"
-version = "1.0.0"
+version = "1.0.1"
+
+kotlin {
+    jvmToolchain(17)
+}
 
 repositories {
     mavenCentral()
@@ -12,15 +16,22 @@ repositories {
     gradlePluginPortal()
 }
 
-intellij {
-    version.set("2023.1")
-    type.set("IU") // IU = IntelliJ Ultimate ← بيدعم Execution & Terminal
-    downloadSources.set(true)
-    plugins.set(listOf("org.jetbrains.plugins.terminal"))
+sourceSets {
+    main {
+        java.srcDirs("src/main/kotlin")
+        resources.srcDirs("src/main/resources")
+    }
 }
 
-tasks {
-    patchPluginXml {
-        changeNotes.set("Initial release of Flutter Structure Generator Plugin.")
-    }
+intellij {
+    version.set("2024.1")
+    type.set("IC")
+    plugins.set(listOf("terminal"))
+    pluginName.set("Flutter Full Structure Generator")
+    instrumentCode.set(false) // ✅ مفيش jar غريب
+    updateSinceUntilBuild.set(false) // ✅ مفيش override
+}
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

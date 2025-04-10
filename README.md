@@ -46,21 +46,25 @@ This tool creates full project structure or feature modules with domain/data/pre
 
 ## 📁 Structure (Full Project)
 
+```
 lib/
 ├── core/
 │   ├── constants
 │   ├── network
+│   ├── errors
+│   ├── utils
 │   ├── services
 │   ├── routing
 │   ├── theme
-│   ├── utils
 │   ├── cubit
+│   └── extensions
 ├── features/
 │   ├── splash
 │   ├── onboarding
 ├── app.dart
 ├── main.dart
 └── app_bloc_observer.dart
+```
 
 ---
 
@@ -83,7 +87,7 @@ Automatically copied from plugin's `assets/`.
 
 ## 📸 Preview
 
-![preview](plugin_preview.png)
+![preview](image.png)
 
 ---
 
